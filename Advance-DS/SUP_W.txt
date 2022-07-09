@@ -1,0 +1,112 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+					
+public class Program
+{
+	public static void Main()
+	{
+		SegmentTree s = new SegmentTree();
+		int n = Convert.ToInt32(Console.ReadLine());
+		if (n < 3)
+		{
+			Console.WriteLine(0);
+			return;
+		}
+		
+		long[] nums = Console.ReadLine().Split(' ').Select(i => Convert.ToInt64(i)).ToArray();
+		long[] dp = new long[n];
+		Array.Fill(dp, Int64.MaxValue);
+		s.Build(n, dp);
+		
+		for (int i = 0; i < 3; i++)
+		{
+			dp[i] = nums[i];
+			s.Update(i, dp[i]);
+		}
+		
+		for (int i = 3; i < n; i++)
+		{
+			dp[i] = nums[i] + s.Query(i-3, i-1);
+			s.Update(i, dp[i]);
+		}
+		
+		Console.WriteLine(s.Query(n-3, n-1));
+	}
+	
+	public class SegmentTree
+	{
+		int n;
+		long[] st;
+		
+		public void Build(int _n, long[] nums)
+		{
+			n = _n;
+			st = new long[4*n];
+			Build(0, n-1, 0, nums);
+		}
+		
+		public void Build(int start, int end, int node, long[] nums)
+		{
+			if (start == end)
+			{
+				st[node] = nums[start];
+				return;
+			}
+			
+			int mid = start + (end-start)/2;
+			Build(start, mid, 2*node+1, nums);
+			Build(mid+1, end, 2*node+2, nums);
+			
+			st[node] = Math.Min(st[2*node+1], st[2*node+2]);
+		}
+		
+		public long Query(int l, int r)
+		{
+			return Query(0, n-1, l, r, 0);
+		}
+		
+		public long Query(int start, int end, int l, int r, int node)
+		{
+			if (start > r || end < l)
+				return Int32.MaxValue;
+			
+			if (l <= start && r >= end)
+				return st[node];
+			
+			int mid = start + (end - start)/2;
+			
+			long q1 = Query(start, mid, l, r, 2*node+1);
+			long q2 = Query(mid+1, end, l, r, 2*node+2);
+			
+			return Math.Min(q1, q2);
+		}
+		
+		public void Update(int index, long value)
+		{
+			Update(0, n-1, index, value, 0);
+		}
+		
+		public void Update(int start, int end, int index, long value, int node)
+		{
+			if (start == end)
+			{
+				st[node] = value;
+				return;
+			}
+			
+			int mid = start + (end-start)/2;
+			
+			if (index <= mid)
+			{
+				Update(start, mid, index, value, 2*node+1);
+			}
+			else
+			{
+				Update(mid+1, end, index, value, 2*node+2);
+			}
+			
+			st[node] = Math.Min(st[2*node+1], st[2*node+2]);
+		}
+	}
+}

@@ -1,0 +1,132 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+					
+public class Program
+{
+	public class Query
+	{
+		public int left;
+		public int right;
+		public int id;
+		public int ans;
+	}
+	
+	public class FenwickTree
+	{
+		int n;
+		int[] st;
+		
+		public void Build(int _n)
+		{
+			n = _n + 1;
+			st = new int[n];
+		}
+		
+		public void Update(int index, int value)
+		{
+			index++;
+			while (index < n)
+			{
+				st[index] += value;
+				index += (index & (-index));
+			}
+		}
+		
+		public int Query(int l, int r)
+		{
+			return Sum(r) - Sum(l-1);
+		}
+		
+		public int Sum(int index)
+		{
+			index++;
+			int sum = 0;
+			while (index > 0)
+			{
+				sum += st[index];
+				index -= (index & (-index));
+			}
+			return sum;
+		}
+	}
+	
+	public class Solve
+	{
+		Dictionary<int, int> map1;
+		Dictionary<int, List<Query>> map2;
+		FenwickTree fn;
+		
+		public Solve()
+		{
+			int n = Convert.ToInt32(Console.ReadLine());
+			int m = (int)Math.Sqrt(n);
+			int[] bi = new int[m+1];
+			int[] nums = Console.ReadLine().Split(' ').Select(i => Convert.ToInt32(i)).ToArray();
+			int q = Convert.ToInt32(Console.ReadLine());
+			Query[] queries = new Query[q];
+      		for (int i = 0; i < q; i++)
+          		queries[i] = new Query();
+		
+			map1 = new Dictionary<int, int>();
+			map2 = new Dictionary<int, List<Query>>();
+			fn = new FenwickTree();
+			fn.Build(n);
+			
+			for (int i = 0; i < q; i++)
+			{
+				int[] ab = Console.ReadLine().Split(' ').Select(a => Convert.ToInt32(a)).ToArray();
+				queries[i].left = ab[0]-1;
+				queries[i].right = ab[1]-1;
+				queries[i].id = i;
+			
+				if (!map2.ContainsKey(queries[i].right))
+				{
+					map2.Add(queries[i].right, new List<Query>());
+				}
+				
+				map2[queries[i].right].Add(queries[i]);
+			}
+			
+			for (int i = 0; i < n; i++)
+			{
+				if (map1.ContainsKey(nums[i]))
+				{
+					int index = map1[nums[i]];
+					fn.Update(index, -1);
+					map1.Remove(nums[i]);
+					map1.Add(nums[i], i);
+					fn.Update(i, 1);
+				}
+				else
+				{
+					map1.Add(nums[i], i);
+					fn.Update(i, 1);
+				}
+				
+				if (map2.ContainsKey(i))
+				{
+					foreach (var qur in map2[i])
+					{
+						int left = qur.left;
+						int right = i;
+						int sum = fn.Query(left, right);
+						qur.ans = sum;
+					}
+				}
+			}
+		
+			Array.Sort(queries, (a, b) => a.id - b.id);
+		
+			for (int i = 0; i < q; i++)
+			{
+				Console.WriteLine(queries[i].ans);
+			}
+		}
+	}
+	
+	public static void Main()
+	{
+		Solve s = new Solve();
+	}
+}
