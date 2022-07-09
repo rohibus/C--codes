@@ -1,0 +1,52 @@
+using System;
+
+public class Test
+{
+	public static void Main()
+	{
+		AlphaCode a = new AlphaCode();
+	}
+	
+	public class AlphaCode
+	{
+		string s;
+		long[] dp;
+		public AlphaCode()
+		{
+			string input = Console.ReadLine();
+			
+			while (input[0] != '0')
+			{
+				s = input;
+				dp = new long[s.Length+1];
+				Array.Fill(dp, -1);
+				long ans = Solve(0);
+				Console.WriteLine(ans);
+				input = Console.ReadLine();
+			}
+		}
+		
+		public long Solve(int i)
+		{
+			if (i == s.Length)
+				return 1;
+			
+			if (dp[i] != -1)
+				return dp[i];
+			
+			long ans = 0;
+			
+			if (s[i] >= '1' && s[i] <= '9')
+				ans += Solve(i+1);
+			
+			if (i+1 < s.Length && (s[i] == '1'))
+				ans += Solve(i+2);
+			
+			if (i+1 < s.Length && (s[i] == '2' && s[i+1] <= '6'))
+				ans += Solve(i+2);
+			
+			dp[i] = ans;
+			return ans;
+		}
+	}
+}

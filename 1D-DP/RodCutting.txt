@@ -1,0 +1,44 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+					
+public class Program
+{
+	public static void Main()
+	{
+		RodCutting r = new RodCutting();
+	}
+	
+	public class RodCutting
+	{
+		int[] prices;
+		int[] dp;
+		public RodCutting()
+		{
+			int n = Convert.ToInt32(Console.ReadLine());
+			prices = Console.ReadLine().Split(' ').Select(a => Convert.ToInt32(a)).ToArray();
+			dp = new int[n+1];
+			Array.Fill(dp, -1);
+			int ans = Solve(n);
+          	Console.WriteLine(ans);
+		}
+		
+		public int Solve(int n)
+		{
+			if (n == 0)
+				return 0;
+			
+			if (dp[n] != -1)
+				return dp[n];
+			
+			int ans = 0;
+			for (int i = 1; i <= n; i++)
+			{
+				ans = Math.Max(ans, prices[i-1] + Solve(n-i));
+			}
+			
+			dp[n] = ans;
+			return ans;
+		}
+	}
+}

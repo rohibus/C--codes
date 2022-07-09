@@ -1,0 +1,70 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+					
+public class Program
+{
+	public static void Main()
+	{
+		PaliPar p = new PaliPar("aaaa");
+	}
+	
+	public class PaliPar
+	{
+		int n;
+		List<List<string>> result;
+		string s;
+		public PaliPar(string _s)
+		{
+			s = _s;
+			n = s.Length;
+			result = new List<List<string>>();
+			
+			Solve(0, new List<string>());
+			
+			foreach (var item in result)
+			{
+				foreach (var item2 in item)
+					Console.Write(item2 + "	");
+				Console.WriteLine();
+			}
+		}
+		
+		public void Solve(int i, List<string> current)
+		{
+			if (i == n)
+			{
+				result.Add(new List<string>(current));
+				return;
+			}
+			
+			for (int j = i; j < n; j++)
+			{
+				string temp = s.Substring(i, j-i+1);
+				if (IsPali(temp))
+				{
+					List<string> list = new List<string>(current);
+					list.Add(temp);
+					Solve(j+1, list);
+				}
+			}
+		}
+		
+		public bool IsPali(string str)
+		{
+			bool ans = true;
+			int i = 0;
+			int j = str.Length-1;
+			
+			while (i < j)
+			{
+				if (str[i] != str[j])
+					return false;
+				i++;
+				j--;
+			}
+			
+			return ans;
+		}
+	}
+}
