@@ -1,0 +1,46 @@
+public class Solution {
+    int[][] dp;
+    public int SplitArray(int[] nums, int m) 
+    {
+        dp = new int[nums.Length+1][];
+        
+        for (int i = 0; i < nums.Length; i++)
+        {
+            dp[i] = new int[m+1];
+            Array.Fill(dp[i], -1);
+        }
+        
+        int ans = Solve(0, nums, m);
+        return ans;
+    }
+    
+    public int Solve(int index, int[] nums, int m)
+    {
+        if (index >= nums.Length)
+        {
+            if (m == 0)
+                return 0;
+            else
+                return Int32.MaxValue;
+        }
+        
+        if (m <= 0)
+            return Int32.MaxValue;
+        
+        if (dp[index][m] != -1)
+            return dp[index][m];
+        
+        
+        int ans = Int32.MaxValue;
+        int sum = 0;
+        
+        for (int i = index; i < nums.Length; i++)
+        {
+            sum += nums[i];
+            ans = Math.Min(ans, Math.Max(sum, Solve(i+1, nums, m-1)));
+        }
+        
+        dp[index][m] = ans;
+        return ans;
+    }
+}

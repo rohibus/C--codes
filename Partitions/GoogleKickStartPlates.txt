@@ -1,0 +1,65 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+					
+public class Program
+{
+	public static void Main()
+	{
+		Plates p = new Plates();
+	}
+	
+	public class Plates
+	{
+		public Plates()
+		{
+			int t = Convert.ToInt32(Console.ReadLine());
+			
+			for (int i = 1; i <= t; i++)
+			{
+				int ans = Solve();
+				Console.WriteLine("Case #" + i +": " + ans);
+			}
+		}
+		
+		public int Solve()
+		{
+			int[] nums = Console.ReadLine().Split(' ').Select(a => Convert.ToInt32(a)).ToArray();
+			int n = nums[0];
+			int k = nums[1];
+			int p = nums[2];
+			
+			int[][] grid = new int[n][];
+			int[][] preSum = new int[n+1][];
+			
+			for (int i = 0; i < n; i++)
+			{
+				preSum[i] = new int[k+1];
+				grid[i] = Console.ReadLine().Split(' ').Select(a => Convert.ToInt32(a)).ToArray();
+				
+				for (int j = 0; j < k; j++)
+				{
+					preSum[i][j+1] = preSum[i][j] + grid[i][j];
+				}
+			}
+			
+			int[][] dp = new int[n+1][];
+			
+			for (int i = 0; i <= n; i++)
+				dp[i] = new int[p+1];
+			
+			for (int i = 1; i <= n; i++)
+			{
+				for (int j = 1; j <= p; j++)
+				{
+					for (int x = 0; x <= Math.Min(j, k); x++)
+					{
+						dp[i][j] = Math.Max(dp[i][j], preSum[i-1][x] + dp[i-1][j-x]);
+					}
+				}
+			}
+			
+			return dp[n][p];
+		}
+	}
+}
