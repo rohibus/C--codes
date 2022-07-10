@@ -1,0 +1,29 @@
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		FriendsPairing n = new FriendsPairing();
+	}
+	
+	public class FriendsPairing
+	{
+		public FriendsPairing()
+		{
+			int n = Convert.ToInt32(Console.ReadLine());
+			
+			Console.WriteLine(Solve(n));
+		}
+		
+		public int Solve(int n)
+		{
+			if(n <= 2)
+				return n;
+			
+			int ans = 0;
+			ans = Solve(n-1) + (n-1) * Solve(n-2);
+			return ans;
+		}
+	}
+}

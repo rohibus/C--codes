@@ -1,0 +1,29 @@
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		NumberOfJumpsToReachN n = new NumberOfJumpsToReachN();
+	}
+	
+	public class NumberOfJumpsToReachN
+	{
+		public NumberOfJumpsToReachN()
+		{
+			int n = Convert.ToInt32(Console.ReadLine());
+			int[] fn = new int[n+1];
+			
+			fn[1] = 1;
+			fn[2] = 2;
+			fn[3] = 4;
+			
+			for (int i = 4; i <= n; i++)
+			{
+				fn[i] = fn[i-1] + fn[i-2] + fn[i-3];
+			}
+			
+			Console.WriteLine(fn[n]);
+		}
+	}
+}
